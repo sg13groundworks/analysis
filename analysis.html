@@ -307,6 +307,633 @@
               These values can be translated directly into CDN rules (e.g., Cloudflare/Akamai) or web server configs.
             </small>
           </div>
+<div>
+<h3><strong>📌 Detailed Analysis &amp; Summary of Issues</strong></h3>
+<p><span style="font-weight: 400;">Based on the uploaded dataset </span><strong>www_groundworks_com_serve_static_assets_with_an_efficient_cache_policy (1).xlsx</strong><span style="font-weight: 400;">, we analyzed resource usage (JS, CSS, Images, Fonts &amp; third-party assets) per URL.</span></p>
+<h3><strong>Key Problems Identified</strong></h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><strong>Issue</strong></p>
+</td>
+<td>
+<p><strong>Evidence</strong></p>
+</td>
+<td>
+<p><strong>Impact</strong></p>
+</td>
+<td>
+<p><strong>Cause</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Extremely large image payloads on several pages</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Example: soil-types page loads </span><strong>~8200 KiB raw images</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Slow LCP &amp; FCP, poor Core Web Vitals</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Uncompressed / unoptimized images, missing modern formats (WebP/AVIF), possibly wrong resolution</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Heavy scripts on location-based pages</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">/locations/ loads </span><strong>6965 KiB JS</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Blocks rendering, increases TBT and JS execution overhead</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Too many tracking + map JS libraries, third-party scripts unoptimized</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>High third-party resource usage (~200 KiB average)</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Global use of tracking/marketing scripts across pages</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Costs bandwidth &amp; performance</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Poor caching headers on third-party URLs, excessive marketing tools</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Missing efficient cache policies</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Transfer size = Download size (no caching)</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Repeat visits are not optimized</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Cache-control headers missing or set too short</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>No differential caching for low-content pages</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">All URLs treated similarly</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Loss of speed</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Need conditional disabling of Critical CSS, heavy JS, heavy resources</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><strong>Many pages have large total resource size</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Average page weight: </span><strong>462 KiB</strong><span style="font-weight: 400;">, peaks &gt; </span><strong>8500 KiB</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Inconsistent performance</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Lack of resource layering, no lazy loading strategy</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3><strong>Top Offending Pages</strong></h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><strong>URL</strong></p>
+</td>
+<td>
+<p><strong>Total Size (KiB)</strong></p>
+</td>
+<td>
+<p><strong>Images (KiB)</strong></p>
+</td>
+<td>
+<p><strong>Scripts (KiB)</strong></p>
+</td>
+<td>
+<p><strong>Likely Issue</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">/glossary/soil-types/</span></p>
+</td>
+<td>
+<p><strong>8570.82</strong></p>
+</td>
+<td>
+<p><strong>8198.96</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">194.92</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Huge uncompressed images</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">/locations/</span></p>
+</td>
+<td>
+<p><strong>7277.64</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">150.67</span></p>
+</td>
+<td>
+<p><strong>6965.37</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Map libraries &amp; third-party scripts</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">/solutions/crawl-space/</span></p>
+</td>
+<td>
+<p><strong>5971.86</strong></p>
+</td>
+<td>
+<p><strong>5597.91</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">194.88</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Image-heavy</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">/glossary/r-value/</span></p>
+</td>
+<td>
+<p><strong>5802.87</strong></p>
+</td>
+<td>
+<p><strong>5430.36</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">194.90</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Image-heavy</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">/glossary/problems-...</span></p>
+</td>
+<td>
+<p><strong>5077.00</strong></p>
+</td>
+<td>
+<p><strong>4704.42</strong></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">194.92</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Image-heavy</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2><strong>Root Causes</strong></h2>
+<h3><strong>1. Large unoptimized images</strong></h3>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">No WebP/AVIF conversion</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Images likely serve full-size hero graphics instead of responsive sizing</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Missing lazy-loading &amp; CDN optimizations</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h3><strong>2. Excessive JavaScript</strong></h3>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Map libraries &amp; tracking scripts loading globally instead of conditionally</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Single page loading ~7MB of JS (/locations/)</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h3><strong>3. Ineffective caching</strong></h3>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Resources not returning strong caching headers</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Transfer vs total size equal &rArr; cache miss on every load</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h3><strong>4. Third-party dependency overhead</strong></h3>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Multiple marketing trackers (Facebook, GTM, Hotjar, HubSpot, etc.)</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Loading synchronous scripts</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h3><strong>5. No asset strategy per template</strong></h3>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Thin content pages still load full site JS &amp; CSS bundles</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h2><strong>Recommendations for Fixing</strong></h2>
+<h3><strong>🔧 Priority Fixes</strong></h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><strong>Priority</strong></p>
+</td>
+<td>
+<p><strong>Action</strong></p>
+</td>
+<td>
+<p><strong>Expected Benefit</strong></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">High</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Convert large images to WebP + compress + responsive</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Reduce size by 70-80%</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">High</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Load map &amp; tracking JS only on pages needing them</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Reduce JS execution time</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">High</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Implement Cache-Control headers &amp; CDN caching</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Improve repeat load performance significantly</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">Medium</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Setup lazy-loading for below-fold images</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Reduce initial render time</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">Medium</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Conditional disable of critical CSS for thin pages</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Faster FCP/LCP</span></p>
+</td>
+</tr>
+<tr>
+<td>
+<p><span style="font-weight: 400;">Medium</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Review third-party scripts &amp; async/defer them</span></p>
+</td>
+<td>
+<p><span style="font-weight: 400;">Reduce blocking time</span></p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2><strong>Quick Insights from the Data</strong></h2>
+<p><strong>Average payloads</strong></p>
+<p><span style="font-weight: 400;">{</span></p>
+<p><span style="font-weight: 400;">&nbsp;'avg_total_size': 462 KB,</span></p>
+<p><span style="font-weight: 400;">&nbsp;'avg_scripts_size': 228 KB,</span></p>
+<p><span style="font-weight: 400;">&nbsp;'avg_images_size': 37 KB,</span></p>
+<p><span style="font-weight: 400;">&nbsp;'avg_third_party': 200 KB</span></p>
+<p><span style="font-weight: 400;">}</span></p>
+<p><span style="font-weight: 400;">➡️ Normal pages are not too heavy</span></p>
+<p><span style="font-weight: 400;">⚠️ But problematic pages spike massively&mdash;this inconsistency breaks user experience</span></p>
+<h2><strong>Conclusion</strong></h2>
+<p><span style="font-weight: 400;">The majority of performance degradation isn&rsquo;t site-wide but </span><strong>concentrated in specific high-resource pages</strong><span style="font-weight: 400;">, mainly glossary and locations pages. The primary issue is </span><strong>huge unoptimized media + excessive JS + weak caching controls</strong><span style="font-weight: 400;">.</span></p>
+<p><span style="font-weight: 400;">Fixing these areas should result in:</span></p>
+<h3><strong>✔ +40&ndash;60% faster load times</strong></h3>
+<h3><strong>✔ Improved LCP under 2.5s</strong></h3>
+<h3><strong>✔ Better SEO and conversions</strong></h3>
+<p><span style="font-weight: 400;">Awesome, let&rsquo;s turn this into something your dev/SEO team can actually execute. I&rsquo;ll break it into the four things you asked for.</span></p>
+<h2><strong>1️⃣ Page-by-Page Optimization Roadmap</strong></h2>
+<h3><strong>A.&nbsp;</strong></h3>
+<h3><strong>Tiering Pages by Severity</strong></h3>
+<p><span style="font-weight: 400;">From the data:</span></p>
+<ul>
+<li style="font-weight: 400;"><strong>Tier 1 &ndash; Critical (&gt; 5000 KiB total)</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">/glossary/soil-types/ (~8571 KiB, ~8199 KiB images)</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">/locations/ (~7278 KiB, ~6965 KiB scripts)</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">/solutions/crawl-space/... (~5972 KiB, ~5598 KiB images)</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">/glossary/r-value/ (~5803 KiB, ~5430 KiB images)</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">/glossary/problems-... (~5077 KiB, ~4704 KiB images)</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><strong>Tier 2 &ndash; High (3000&ndash;5000 KiB)</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Multiple glossary/resource pages (bedrock, stack-effect, floor-joist, downspouts, etc.) clustered around </span><strong>3&ndash;5 MB</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><strong>Tier 3 &ndash; Normal but improvable (&lt; 1000 KiB)</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Homepage, newsroom, sitemap, service-areas, most standard pages (~400&ndash;1100 KiB).</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<h3><strong>B.&nbsp;</strong></h3>
+<h3><strong>Roadmap by Tier</strong></h3>
+<h4><strong>🔴 Tier 1 &ndash; Critical (Sprint 1 &ndash; Immediate)</strong></h4>
+<ol>
+<li style="font-weight: 400;"><strong>Image-heavy pages (soil-types, crawl-space, r-value, problems-&hellip;, etc.)</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><strong>Actions</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Convert all hero &amp; content images to </span><strong>WebP/AVIF</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Generate </span><strong>responsive image sets</strong><span style="font-weight: 400;"> (srcset + sizes) for mobile, tablet, desktop.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Apply </span><strong>lazy-loading</strong><span style="font-weight: 400;"> for below-the-fold images (loading="lazy").</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Compress images to a </span><strong>target size of &lt; 200 KB per image</strong><span style="font-weight: 400;"> where possible.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><strong>Goal</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Reduce image payload on these pages from </span><strong>4&ndash;8 MB &rarr; &lt; 1 MB</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<li style="font-weight: 400;"><strong>JS-heavy page (/locations/)</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><strong>Actions</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Split map/locator into a </span><strong>separate JS bundle</strong><span style="font-weight: 400;"> loaded only when the user interacts (click &ldquo;View map&rdquo;, scroll into view, etc.).</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Mark all third-party JS as </span><strong>async/defer</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Remove unused libraries (old trackers, heatmaps, A/B testing tools not in use).</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><strong>Goal</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Reduce JS payload from </span><strong>~7 MB &rarr; &lt; 500&ndash;800 KB</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+</ol>
+<h4><strong>🟠 Tier 2 &ndash; High (Sprint 2)</strong></h4>
+<p><span style="font-weight: 400;">For each glossary / resource URL in the 3&ndash;5 MB range:</span></p>
+<ul>
+<li style="font-weight: 400;"><strong>Images</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Batch process images through your image pipeline (Cloudflare Images / Imgix / Akamai / ImageKit, etc.).</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Ensure </span><strong>max dimensions</strong><span style="font-weight: 400;"> reasonable for layout (e.g., 1200px wide max, not full camera resolution).</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><strong>CSS &amp; JS</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Ensure only </span><strong>critical CSS</strong><span style="font-weight: 400;"> is inlined; rest is deferred.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Remove legacy JS where not needed (no maps/videos? don&rsquo;t load those bundles).</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<h4><strong>🟡 Tier 3 &ndash; Normal (Sprint 3)</strong></h4>
+<p><span style="font-weight: 400;">For pages around ~400&ndash;1100 KiB:</span></p>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Ensure:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><strong>HTTP/2 + compression (Gzip/Brotli)</strong><span style="font-weight: 400;"> is enabled.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Fonts are </span><strong>preloaded</strong><span style="font-weight: 400;"> with font-display: swap.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Third-party scripts are:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><strong>Deferred</strong><strong><br /><br /></strong></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Loaded through a </span><strong>tag manager</strong><span style="font-weight: 400;"> with performance rules.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+</ul>
+<h3><strong>C.&nbsp;</strong></h3>
+<h3><strong>Template-Level Actions</strong></h3>
+<p><span style="font-weight: 400;">Instead of per-URL only, define template-level optimization:</span></p>
+<ul>
+<li style="font-weight: 400;"><strong>Glossary Template</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Shared logic: aggressive image optimization + lazy load.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><strong>Location/Service-Area Template</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Conditional load for maps, heavy scripts.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><strong>Blog/Resources Template</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Standardized hero image sizes &amp; CDN-delivered.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<h2><strong>2️⃣ Performance SRS (System Requirements Specification)</strong></h2>
+<p><span style="font-weight: 400;">You can hand this directly to dev/infra teams.</span></p>
+<h3><strong>2.1. Scope</strong></h3>
+<p><span style="font-weight: 400;">Optimize </span><strong>static assets</strong><span style="font-weight: 400;"> (images, JS, CSS, fonts, third-party scripts) for www.groundworks.com to meet Core Web Vitals targets.</span></p>
+<h3><strong>2.2. Performance Targets</strong></h3>
+<ol>
+<li style="font-weight: 400;"><strong>LCP</strong><span style="font-weight: 400;">: &lt; </span><strong>2.5s</strong><span style="font-weight: 400;"> on 75th percentile for mobile.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><strong>CLS</strong><span style="font-weight: 400;">: &lt; </span><strong>0.1</strong><span style="font-weight: 400;"> on all major templates.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><strong>FCP</strong><span style="font-weight: 400;">: &lt; </span><strong>1.8s</strong><span style="font-weight: 400;"> on default 4G mobile profile.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><strong>Total Page Weight (HTML + assets)</strong><span style="font-weight: 400;">:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Standard pages: </span><strong>&lt; 1000 KiB</strong><strong><br /><br /></strong></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Heavy templates (glossary/resources/locations): </span><strong>&lt; 1500&ndash;2000 KiB</strong><strong><br /><br /></strong></li>
+</ul>
+</ol>
+<h3><strong>2.3. Functional Requirements</strong></h3>
+<h4><strong>2.3.1. Image Optimization</strong></h4>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">All raster images must:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Be delivered in </span><strong>WebP/AVIF</strong><span style="font-weight: 400;"> where supported.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Have </span><strong>responsive variants</strong><span style="font-weight: 400;"> (srcset) and appropriate </span><strong>sizes</strong><span style="font-weight: 400;"> attributes.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Use </span><strong>lazy loading</strong><span style="font-weight: 400;"> (loading="lazy") except LCP image.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">CMS must enforce:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Max upload resolution &amp; automated compression.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<h4><strong>2.3.2. JavaScript Optimization</strong></h4>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Split JavaScript into:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><strong>Core bundle</strong><span style="font-weight: 400;"> (critical UI).</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><strong>Feature bundles</strong><span style="font-weight: 400;"> (maps, forms, trackers) loaded conditionally.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">All non-critical JS must be:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Marked </span><strong>defer</strong><span style="font-weight: 400;"> or </span><strong>async</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Third-party scripts:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Loaded via a </span><strong>single Tag Manager</strong><span style="font-weight: 400;"> with performance rules.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Non-essential scripts disabled on </span><strong>Glossary &amp; Resource</strong><span style="font-weight: 400;"> templates.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<h4><strong>2.3.3. CSS Optimization</strong></h4>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Extract and inline </span><strong>critical CSS</strong><span style="font-weight: 400;"> per template for above-the-fold content.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Move non-critical CSS to:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Deferred stylesheets (media="print" + onload trick) or</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Loaded after initial paint.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Remove unused CSS via </span><strong>PurgeCSS</strong><span style="font-weight: 400;"> / build pipeline.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h4><strong>2.3.4. Caching &amp; CDN</strong></h4>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">All static assets (images, JS, CSS, fonts) must:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Be served via CDN with </span><strong>immutable fingerprints</strong><span style="font-weight: 400;"> in filenames.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Return strong cache headers (see section 4).</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">HTML pages:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Must not be cached with overly long TTL (e.g., 5&ndash;15 mins at CDN edge is okay with cache purge on deploy).</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<h4><strong>2.3.5. Monitoring &amp; Alerts</strong></h4>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Integrate </span><strong>Lighthouse CI / WebPageTest</strong><span style="font-weight: 400;"> in CI/CD.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Track:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">LCP, FID, CLS, TBT, page weight.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Set thresholds:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Failing builds if LCP &gt; 3s on key templates.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<h3><strong>2.4. Non-Functional Requirements</strong></h3>
+<ul>
+<li style="font-weight: 400;"><strong>Security:</strong><span style="font-weight: 400;"> No mixed content; HTTPS-only.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><strong>Compatibility:</strong><span style="font-weight: 400;"> Modern evergreen browsers; graceful degradation for older ones.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><strong>Maintainability:</strong><span style="font-weight: 400;"> Document templates &amp; performance budget per template.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h2><strong>3️⃣ Lighthouse Improvement Projections</strong></h2>
+<p><span style="font-weight: 400;">These are </span><strong>realistic directional projections</strong><span style="font-weight: 400;"> based on typical impact of optimizations.</span></p>
+<h3><strong>Before (Observed Pattern from Data)</strong></h3>
+<ul>
+<li style="font-weight: 400;"><strong>Critical Pages (e.g., soil-types, crawl-space, locations):</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">LCP: ~4&ndash;6s on mobile (guess, based on 5&ndash;8 MB payload).</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">TBT: 300&ndash;800ms for map/JS-heavy pages.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Performance score: </span><strong>30&ndash;55</strong><span style="font-weight: 400;"> range.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<h3><strong>After Optimization (Target State)</strong></h3>
+<ol>
+<li style="font-weight: 400;"><strong>Image-heavy Glossary Pages</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Reduce image payload from ~5&ndash;8 MB &rarr; </span><strong>0.8&ndash;1.2 MB</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Expected:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">LCP improvement: </span><strong>-1.5 to -3s</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Lighthouse Performance: from ~40 &rarr; </span><strong>75&ndash;90</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<li style="font-weight: 400;"><strong>JS-heavy Location Page</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">JS from ~7 MB &rarr; </span><strong>0.7&ndash;1 MB</strong><span style="font-weight: 400;"> (conditional map loading).</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Expected:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">TBT drop: </span><strong>&gt;50&ndash;70%</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Lighthouse Performance: from ~30&ndash;45 &rarr; </span><strong>70&ndash;85</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<li style="font-weight: 400;"><strong>Site-wide Third-Party Optimization</strong><strong><br /><br /></strong></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Async/defer trackers, remove unused.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Expected:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Small but meaningful LCP &amp; FID improvement.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Global Performance scores up by </span><strong>5&ndash;10 points</strong><span style="font-weight: 400;">.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+</ol>
+<p><span style="font-weight: 400;">You can encode these into a table for stakeholders:</span></p>
+<p><span style="font-weight: 400;">&ldquo;If we finish Phase 1 image + JS optimization, we expect +25&ndash;40 Lighthouse points on worst pages.&rdquo;</span></p>
+<h2><strong>4️⃣ Recommended Exact Cache-Control Configurations</strong></h2>
+<p><span style="font-weight: 400;">Below is a concrete configuration you can implement at CDN / web server level (NGINX/Apache/Cloudflare):</span></p>
+<h3><strong>4.1. HTML Documents</strong></h3>
+<ul>
+<li style="font-weight: 400;"><strong>Goal:</strong><span style="font-weight: 400;"> Fresh content, but allow short edge caching.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<p><span style="font-weight: 400;"># For HTML pages</span></p>
+<p><span style="font-weight: 400;">Cache-Control: max-age=60, s-maxage=900, must-revalidate</span></p>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">max-age=60 &rarr; browser caches for 60s.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">s-maxage=900 &rarr; CDN can cache for 15 minutes.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Use </span><strong>cache invalidation on deploy</strong><span style="font-weight: 400;"> for important content changes.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h3><strong>4.2. Versioned Static Assets (JS, CSS, Images, Fonts with hashes)</strong></h3>
+<p><span style="font-weight: 400;">For files like /static/js/main.abc123.js, /static/img/hero.abc123.webp:</span></p>
+<p><span style="font-weight: 400;">Cache-Control: public, max-age=31536000, immutable</span></p>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">One-year cache (31536000) with immutable since filenames change on deploy.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h3><strong>4.3. Unversioned Static Assets (If any)</strong></h3>
+<p><span style="font-weight: 400;">If some assets are not fingerprinted:</span></p>
+<p><span style="font-weight: 400;">Cache-Control: public, max-age=86400</span></p>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">1-day TTL. Ideally, migrate all static assets to </span><strong>fingerprinted paths</strong><span style="font-weight: 400;"> and use the long cache from 4.2.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<h3><strong>4.4. Third-Party Scripts</strong></h3>
+<p><span style="font-weight: 400;">You don&rsquo;t control their headers, but </span><strong>you control how/when you load them</strong><span style="font-weight: 400;">:</span></p>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Always:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">&lt;script src="..." async&gt;&lt;/script&gt; or &lt;script src="..." defer&gt;&lt;/script&gt;</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Use a single </span><strong>Tag Manager</strong><span style="font-weight: 400;"> and restrict tags by page-type.</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">For self-hosted wrappers/proxies (if used):</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<p><span style="font-weight: 400;">Cache-Control: public, max-age=3600</span></p>
+<h3><strong>4.5. Fonts</strong></h3>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Self-hosted fonts (preferred):</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+<p><span style="font-weight: 400;">Cache-Control: public, max-age=31536000, immutable</span></p>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Use:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">font-display: swap; in CSS to avoid FOIT (flash of invisible text).</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<h3><strong>4.6. Images</strong></h3>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">CDN-based optimization (ImageKit/Cloudflare/etc.) should:</span><span style="font-weight: 400;"><br /><br /></span></li>
+<ul>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Auto-generate WebP/AVIF.</span><span style="font-weight: 400;"><br /><br /></span></li>
+<li style="font-weight: 400;"><span style="font-weight: 400;">Attach:</span><span style="font-weight: 400;"><br /><br /></span></li>
+</ul>
+</ul>
+<p><span style="font-weight: 400;">Cache-Control: public, max-age=31536000, immutable</span></p>
+<p><span style="font-weight: 400;">Vary: Accept</span></p>
+<p><span style="font-weight: 400;">So the CDN serves optimized format by browser support.</span></p>
+<p><br /><br /></p>
+</div>
         </div>
       </div>
     </div>
