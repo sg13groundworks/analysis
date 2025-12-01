@@ -1,0 +1,374 @@
+Here’s a ready-to-host single HTML file for your stakeholder dashboard.
+Just save this as groundworks-performance-dashboard.html and upload/host it anywhere (or open locally in a browser).
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Groundworks Performance Optimization Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Bootstrap 5 CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <!-- Chart.js for simple visualizations -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    body {
+      background-color: #f5f7fb;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+    .navbar-brand {
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .card-kpi {
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+    }
+    .badge-tier-1 {
+      background-color: #dc3545;
+    }
+    .badge-tier-2 {
+      background-color: #fd7e14;
+    }
+    .badge-tier-3 {
+      background-color: #198754;
+    }
+    .table thead th {
+      white-space: nowrap;
+    }
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #6c757d;
+      margin-bottom: 0.5rem;
+    }
+    .pill {
+      border-radius: 999px;
+      padding: 0.15rem 0.6rem;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+  </style>
+</head>
+<body>
+  <!-- Top Nav -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        Groundworks Performance Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <div class="container mb-5">
+    <!-- Header / Intro -->
+    <div class="row mb-4">
+      <div class="col-lg-12">
+        <div class="card card-kpi p-3 p-md-4">
+          <div class="d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+              <h2 class="mb-1">Static Assets & Performance Overview</h2>
+              <p class="mb-0 text-muted">
+                Summary of current payloads, optimization roadmap, Lighthouse projections,
+                and cache strategy for <strong>groundworks.com</strong>.
+              </p>
+            </div>
+            <div class="mt-3 mt-md-0">
+              <span class="pill bg-success text-white me-2">Phase 1</span>
+              <span class="pill bg-primary text-white">Optimization Plan</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPI Summary -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-3 col-sm-6">
+        <div class="card card-kpi h-100">
+          <div class="card-body">
+            <p class="text-muted mb-1">Avg Total Size</p>
+            <h3 class="mb-1">462 KiB</h3>
+            <small class="text-muted">All pages (mean)</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card card-kpi h-100">
+          <div class="card-body">
+            <p class="text-muted mb-1">Avg Scripts Size</p>
+            <h3 class="mb-1">228 KiB</h3>
+            <small class="text-muted">JS payload per page</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card card-kpi h-100">
+          <div class="card-body">
+            <p class="text-muted mb-1">Avg Images Size</p>
+            <h3 class="mb-1">37 KiB</h3>
+            <small class="text-muted">Image payload per page</small>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 col-sm-6">
+        <div class="card card-kpi h-100">
+          <div class="card-body">
+            <p class="text-muted mb-1">Avg Third-Party Size</p>
+            <h3 class="mb-1">201 KiB</h3>
+            <small class="text-muted">Trackers & external scripts</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier 1 Roadmap -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="section-title">Tier 1 Roadmap (Critical Pages)</div>
+        <div class="card card-kpi">
+          <div class="card-body">
+            <p class="text-muted small mb-3">
+              These pages contribute the most to performance degradation and are prioritized
+              for Phase 1 optimization.
+            </p>
+            <div class="table-responsive">
+              <table class="table table-sm align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Tier</th>
+                    <th>Page / URL</th>
+                    <th>Primary Issue</th>
+                    <th>Proposed Fix</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <span class="badge badge-tier-1">Tier 1</span>
+                    </td>
+                    <td>/glossary/soil-types/</td>
+                    <td>Huge image payload</td>
+                    <td>Convert to WebP/AVIF, responsive images, lazy loading</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="badge badge-tier-1">Tier 1</span>
+                    </td>
+                    <td>/locations/</td>
+                    <td>Excessive JS bundle (~7MB)</td>
+                    <td>Split map JS, load on interaction, async/defer third-party scripts</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="badge badge-tier-1">Tier 1</span>
+                    </td>
+                    <td>/solutions/crawl-space/...</td>
+                    <td>Huge image payload</td>
+                    <td>Compress images, WebP, limit resolution, lazy load</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="badge badge-tier-1">Tier 1</span>
+                    </td>
+                    <td>/glossary/r-value/</td>
+                    <td>Huge image payload</td>
+                    <td>Compress & convert to WebP, responsive sizes</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span class="badge badge-tier-1">Tier 1</span>
+                    </td>
+                    <td>/glossary/problems-...</td>
+                    <td>Huge image payload</td>
+                    <td>Compress & convert to WebP, responsive sizes</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <small class="text-muted">
+              Note: Tier 2 pages (additional glossary/resources) follow the same pattern and are scheduled for Phase 2.
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lighthouse projections -->
+    <div class="row mb-4">
+      <div class="col-12">
+        <div class="section-title">Lighthouse Projections</div>
+        <div class="card card-kpi">
+          <div class="card-body">
+            <p class="text-muted small mb-3">
+              Estimated Lighthouse Performance improvement after applying the Phase 1 optimization plan.
+            </p>
+            <div class="row">
+              <div class="col-lg-6 mb-3 mb-lg-0">
+                <canvas id="lighthouseChart"></canvas>
+              </div>
+              <div class="col-lg-6">
+                <div class="table-responsive">
+                  <table class="table table-sm mb-0 align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Page Type</th>
+                        <th>Current</th>
+                        <th>Projected</th>
+                        <th>Δ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Image-heavy glossary</td>
+                        <td>45</td>
+                        <td>85</td>
+                        <td class="text-success fw-bold">+40</td>
+                      </tr>
+                      <tr>
+                        <td>JS-heavy locations</td>
+                        <td>35</td>
+                        <td>80</td>
+                        <td class="text-success fw-bold">+45</td>
+                      </tr>
+                      <tr>
+                        <td>General pages</td>
+                        <td>70</td>
+                        <td>90</td>
+                        <td class="text-success fw-bold">+20</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <small class="text-muted">
+                  Values are estimates based on typical impact of image, JS, and cache optimizations on similar sites.
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cache configuration section -->
+    <div class="row">
+      <div class="col-12">
+        <div class="section-title">Recommended Cache-Control Strategy</div>
+        <div class="card card-kpi">
+          <div class="card-body">
+            <p class="text-muted small mb-3">
+              Proposed HTTP caching strategy for different asset types. These headers should be applied at CDN
+              or web server level.
+            </p>
+            <div class="table-responsive">
+              <table class="table table-sm align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th>Asset Type</th>
+                    <th>Cache-Control Header</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>HTML documents</td>
+                    <td><code>Cache-Control: max-age=60, s-maxage=900, must-revalidate</code></td>
+                    <td>Short browser cache, 15 min CDN cache; purge on deploy.</td>
+                  </tr>
+                  <tr>
+                    <td>Versioned static assets (JS, CSS, images)</td>
+                    <td><code>Cache-Control: public, max-age=31536000, immutable</code></td>
+                    <td>Long-term cache for fingerprinted files.</td>
+                  </tr>
+                  <tr>
+                    <td>Unversioned static assets</td>
+                    <td><code>Cache-Control: public, max-age=86400</code></td>
+                    <td>1 day cache while migrating to fingerprinted assets.</td>
+                  </tr>
+                  <tr>
+                    <td>Fonts (self-hosted)</td>
+                    <td><code>Cache-Control: public, max-age=31536000, immutable</code></td>
+                    <td>Use <code>font-display: swap;</code> to avoid FOIT.</td>
+                  </tr>
+                  <tr>
+                    <td>CDN-optimized images</td>
+                    <td><code>Cache-Control: public, max-age=31536000, immutable</code><br /><code>Vary: Accept</code></td>
+                    <td>Allows modern formats (WebP/AVIF) based on browser support.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <small class="text-muted">
+              These values can be translated directly into CDN rules (e.g., Cloudflare/Akamai) or web server configs.
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS (optional, for future interactive additions) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Chart initialization -->
+  <script>
+    const ctx = document.getElementById("lighthouseChart").getContext("2d");
+
+    const lighthouseChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Image-heavy glossary", "JS-heavy locations", "General pages"],
+        datasets: [
+          {
+            label: "Current Score",
+            data: [45, 35, 70],
+            backgroundColor: "rgba(220, 53, 69, 0.7)", // red-ish
+          },
+          {
+            label: "Projected Score",
+            data: [85, 80, 90],
+            backgroundColor: "rgba(25, 135, 84, 0.7)", // green-ish
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        aspectRatio: 1.2,
+        plugins: {
+          legend: {
+            position: "bottom",
+          },
+          tooltip: {
+            mode: "index",
+            intersect: false,
+          },
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: {
+              stepSize: 10,
+            },
+            title: {
+              display: true,
+              text: "Lighthouse Performance Score",
+            },
+          },
+        },
+      },
+    });
+  </script>
+</body>
+</html>
+
+
